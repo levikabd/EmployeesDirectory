@@ -1,0 +1,3 @@
+/home/lev/yadi/DEVEL/EmployeesDirectory/build/CMakeFiles/EmployeesDirectory.dir
+/home/lev/yadi/DEVEL/EmployeesDirectory/build/CMakeFiles/edit_cache.dir
+/home/lev/yadi/DEVEL/EmployeesDirectory/build/CMakeFiles/rebuild_cache.dir

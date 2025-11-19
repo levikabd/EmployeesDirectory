@@ -17,4 +17,4 @@ file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
 add_executable(EmployeesDirectory ${SOURCE_FILES})
 TARGET_LINK_LIBRARIES(EmployeesDirectory ${PQXX_LIB} ${PQ_LIB})
 
-file(COPY src/russian_surnames.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/russian_surnames.txt)
+file(COPY src/russian_surnames.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)

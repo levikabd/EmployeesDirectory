@@ -56,8 +56,11 @@
 
         time_t timestamp = time(NULL);
         struct tm datetime = *localtime(&timestamp);
-        year_today = datetime.tm_year;
+        year_today = datetime.tm_year+1900;
+        month_today = datetime.tm_mon+1;
+        //std::cout << "Today: y: " << year_today << ", m: " << month_today << "\n";
         
+        // 2025-11-18
         year_birth = stoi(date.substr(0, 4));
 
         years = year_today - year_birth;
@@ -72,7 +75,7 @@
             };
         };
         
-        month_today = datetime.tm_mon;
+        // 2025-11-18
         month_birth = stoi(date.substr(5, 2));     
 
         if (month_today < month_birth){years--;};
@@ -80,7 +83,7 @@
         if (years<0)
         {
             return 0;
-        };        
+        };                
 
         return years;
     };
@@ -91,7 +94,7 @@
         clock_t start = clock();
 
         pqxx::work txn(m_conn);
-        pqxx::result res = txn.exec("SELECT * FROM employees");        
+        pqxx::result res = txn.exec("SELECT * FROM employees ORDER BY name");        
         for (const auto& row : res) {
             std::cout << "Name:   " << row["name"]   << " | "
                       << "Dateob: " << row["dateob"] << " | "
@@ -131,12 +134,12 @@
 
     std::string generator7()
     {
-        std::string suff="";
+        std::string suff = "";
         for (size_t i = 0; i < 7; i++)
         {
             srand(i);
-            int cKode = rand() % 25;
-            char newChar= 'a' + cKode;
+            int cKode    = rand() % 25;
+            char newChar = 'a' + cKode;
             suff.push_back(newChar);
         };       
         return suff;
@@ -162,11 +165,12 @@
         if (dayS.size()<2)
         {
             dayS = "0" + dayS;
-        };       
+        };      
+
         *dateob= yearS + "-" + monthS + "-" + dayS;
-        if (*gender!="male")
+        if (*gender != "male")
         {
-            if (iter%2==1)
+            if ((iter%2)==1)
             {
                 *gender ="female";            
             }else{
@@ -180,32 +184,32 @@
         {
             srand(iter);
             int pos = rand() % sizeD;
-            family=russian_surnames.at(pos);
+            family  = russian_surnames.at(pos);
         }else
         {
             std::string family = "Fedor";
-            family=family+generator7();
-            if (*gender=="female")
-            {
-                family+="a";
-            };
+        };
+
+        family = family+generator7();
+        if (*gender == "female")
+        {
+            family+="a";
         };
 
         std::string fio="";
         if (*gender=="female")
         {
-            fio = " Poolina Sergeevna";
+            fio = "Polina Sergeevna";
         }else
         {
-            fio = " Petr Sergeevich";
+            fio = "Petr Sergeevich";
         };               
 
-        fio = family + fio;
-
-        size_t numC = iter % 25;
-
+        fio = family + " " + fio;
+        srand(iter);
+        int newInt=rand();
+        size_t numC = newInt % 25;
         char Zag = 'A' + numC;
-
         *name = Zag + fio;
     };
 
@@ -214,11 +218,9 @@
         clock_t start = clock();
         
         std::string sql="";
-        std::string sqlinsert = "INSERT INTO employees (name, dateob, gender) "\
-            "";           
-        std::string sqlvalues = "VALUES (";
-        std::string sqlend = ") "\
-            "";
+        std::string sqlinsert = "INSERT INTO employees (name, dateob, gender) VALUES (";
+        // std::string sqlvalues = "VALUES (";
+        std::string sqlend = "); ";
         for (size_t i = 0; i < 100; i++)
         {
             std::string addsql="", sqlname="", sqldateob="", sqlgender="";
@@ -233,7 +235,7 @@
             newEmployee(&sqlname, &sqldateob, &sqlgender, i);
                       
             addsql =  addsql + sqlinsert;
-            addsql =  addsql + sqlvalues;
+            // addsql =  addsql + sqlvalues;
             addsql =  addsql + "'F" + sqlname   +"', ";
             addsql =  addsql + "'" + sqldateob +"', ";
             addsql =  addsql + "'"+sqlgender+"'";
@@ -243,9 +245,7 @@
             //strcat(sql, addsql);
         };
         
-        // /* Создать инструкцию SQL */
-        // sql = "INSERT INTO MYSTORE (ID,ТИП,ЦВЕТ,МАТЕРИАЛ,ЗАПАС,ЦЕНА) "  \
-        //     "VALUES (7, 'Футболка', 'Синий', 'Нейлон', 500, 1000.00 ); ";
+        //std::cout << sql << "\n";
 
         pqxx::work txn(m_conn);
         txn.exec(sql);
@@ -290,7 +290,7 @@
         clock_t start = clock();
 
         pqxx::work txn(m_conn);
-        pqxx::result res = txn.exec("SELECT * FROM employees WHERE name = 'F*' AND gender = 'male'");        
+        pqxx::result res = txn.exec("SELECT * FROM employees WHERE name LIKE 'F%' AND gender = 'male'");        
         for (const auto& row : res) {
             std::cout << "Name: " << row["name"] << " | "
                       << "Dateob: " << row["dateob"] << " | "
@@ -309,7 +309,7 @@
     void EmployeeDB::optimizeDB()
     {
         pqxx::work txn(m_conn);
-        txn.exec("CREATE INDEX IF NOT EXISTS employees (id SERIAL PRIMARY KEY, name VARCHAR(100), dateob VARCHAR(10), gender VARCHAR(6));");
+        txn.exec("CREATE INDEX name_idx ON employees (name);");
         txn.commit();
     };
 
