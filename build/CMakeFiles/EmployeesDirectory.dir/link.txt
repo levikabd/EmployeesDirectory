@@ -1,1 +1,0 @@
-/usr/bin/clang++-19  -lpqxx -lpq -g CMakeFiles/EmployeesDirectory.dir/src/employee.cpp.o CMakeFiles/EmployeesDirectory.dir/src/main.cpp.o -o EmployeesDirectory  /usr/lib/x86_64-linux-gnu/libpqxx.so /usr/lib/x86_64-linux-gnu/libpq.so 
