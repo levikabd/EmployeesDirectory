@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 3.10.0)
+project(EmployeesDirectory VERSION 0.1.0 LANGUAGES C CXX)
+
+# include(CTest)
+# enable_testing()
+
+set(CMAKE_CXX_STANDARD 17)
+find_package(Boost)
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
+endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lpqxx -lpq")
+set(PQXX /usr/local/include/pqxx)
+find_library(PQXX_LIB pqxx)
+find_library(PQ_LIB pq)
+file(GLOB_RECURSE SOURCE_FILES "src/*.cpp")
+add_executable(EmployeesDirectory ${SOURCE_FILES})
+TARGET_LINK_LIBRARIES(EmployeesDirectory ${PQXX_LIB} ${PQ_LIB})
+
+file(COPY src/russian_surnames.txt DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/russian_surnames.txt)
