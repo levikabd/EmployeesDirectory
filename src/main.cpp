@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 
     try {
         //EmployeeDB db("dbname=employees user=postgres");
-        EmployeeDB db("dbname = employees user = postgres password = postgres \
+        EmployeeDB db("dbname = employees user = postgres password = pass \
         hostaddr = 127.0.0.1  port = 5432");
 
         if (mode==1){           
